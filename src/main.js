@@ -1,7 +1,5 @@
-// For help writing plugins, visit the documentation to get started:
-//   https://docs.insomnia.rest/insomnia/introduction-to-plugins
 const crypto = require('crypto');
-const { createEncodedCanonicalRequest} = require('./canonical-request')
+const {createStringToSign} = require('./string-to-sign')
 
 const accessKeyIdHeader = 'X-Mp-Access-Key'
 const timestampHeader = 'X-Mp-Timestamp'
@@ -28,28 +26,21 @@ const createHmacRequestHook = (clock = defaultClock) => {
     }
 
     const timestamp = clock.getEpochSeconds()
-    const signature = sign(timestamp, secretAccessKey, request)
+    const signature = sign(timestamp, accessKeyId, secretAccessKey, request)
     request.setHeader(timestampHeader, timestamp)
     request.setHeader(authorizationHeader, signature)
   }
 }
 
-const sign = (timestamp, secretAccessKey, request) => {
-  const stringToSign = createStringToSign(timestamp, request)
+const sign = (timestamp, accessKeyId, secretAccessKey, request) => {
+  const stringToSign = createStringToSign(timestamp, accessKeyId, request)
   const decodedSecretAccessKey = Buffer.from(secretAccessKey, 'base64')
   const hmac = crypto.createHmac('sha256', decodedSecretAccessKey)
   hmac.update(stringToSign)
   return hmac.digest('base64')
 }
 
-const createStringToSign = (timestamp, request) => {
-  const encodedCanonicalRequest = createEncodedCanonicalRequest(request)
-  const accessKeyId = request.getHeader(accessKeyIdHeader)
-  return `HMAC-SHA256\n${timestamp}\n${accessKeyId}\n${encodedCanonicalRequest}`
-}
-
 module.exports = {
-  createStringToSign,
   createHmacRequestHook,
   requestHooks: [createHmacRequestHook()]
 }
