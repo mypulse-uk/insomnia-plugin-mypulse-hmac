@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+require 'yaml'
+require 'rake_fly'
+require 'uri'
+
 namespace :plugin do
   desc 'copies the project into your insomnia plugin folder for debugging'
   task :install_dev, [:insomnia_path] do |_, args|
@@ -44,5 +50,19 @@ def get_platform
     'linux'
   else
     'windows'
+  end
+end
+
+namespace :ci do
+  RakeFly.define_project_tasks(
+    pipeline: 'insomnia-plugin-mypulse-hmac',
+    argument_names: [:concourse_url],
+    backend: RakeFly::Tasks::Authentication::Login::FlyBackend
+  ) do |t, args|
+
+    t.concourse_url = args[:concourse_url]
+    t.config = "pipelines/pipeline.yaml"
+    t.non_interactive = true
+
   end
 end
