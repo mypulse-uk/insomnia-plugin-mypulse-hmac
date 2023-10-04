@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# echo "Starting pre-push testing"
+# go && go test:e2e

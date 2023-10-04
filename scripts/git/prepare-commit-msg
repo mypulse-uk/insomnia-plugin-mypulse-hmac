@@ -1,0 +1,26 @@
+#!/bin/bash
+STORY_NUMBER="${STORY_NUMBER:-#1}"
+
+# Check if being run from intellij and skip if so.
+# Note, this is not a good test but IntelliJ doesn't set any IntelliJ specific
+# environment variables so this is the best we can do for now...
+if [ -n "${GIT_TRACE}" ]; then
+    exit 0
+fi
+
+FIRST_LINE="$(head -n 1 "$1")"
+
+case "$2,$3" in
+  merge,)
+    /usr/bin/perl -i.bak -ne 's/^/# /, s/^# #/#/ if /^Conflicts/ .. /#/; print' "$1"
+    ;;
+
+  ,|template,|message,)
+    if [[ "$FIRST_LINE" =~ ^\[.*\] ]]; then
+        exit 0
+    fi
+    cp "$1" "$1.bak" && cat "$1.bak" | sed "1s/^\(.*\)$/[$STORY_NUMBER] \1||Authors: $AUTHORS/" | tr '||' '\n' > "$1"
+    ;;
+
+  *) ;;
+esac
