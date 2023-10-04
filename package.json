@@ -1,9 +1,10 @@
 {
-  "name": "insomnia-plugin-base64",
-  "version": "1.0.0",
+  "name": "insomnia-plugin-mypulse-hmac",
+  "version": "1.0.1",
   "scripts": {
     "test": "jest"
   },
+  "private": true,
   "insomnia": {
     "name": "mypulse-hmac",
     "displayName": "MyPulse HMAC Authentication Plugin",
