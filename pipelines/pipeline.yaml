@@ -30,15 +30,6 @@ resources:
     source:
       url: ((slack_development_webhook_url))
 
-  - name: version
-    type: semver
-    source:
-      driver: git
-      uri: git@github.com:mypulse-uk/library-template.git
-      branch: version
-      file: version
-      private_key: ((git_ssh_key))
-
 jobs:
   - name: test
     serial: true
@@ -46,8 +37,6 @@ jobs:
       - in_parallel:
           - get: source
             trigger: true
-            passed:
-              - provision-ci-database
           - get: application-builder-image
       - task: test
         file: source/pipelines/test/task.yaml

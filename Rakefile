@@ -4,6 +4,8 @@ require 'yaml'
 require 'rake_fly'
 require 'uri'
 
+RakeFly.define_installation_tasks(version: '7.9.0')
+
 namespace :plugin do
   desc 'copies the project into your insomnia plugin folder for debugging'
   task :install_dev, [:insomnia_path] do |_, args|
