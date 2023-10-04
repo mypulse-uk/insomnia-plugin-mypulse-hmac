@@ -29,7 +29,7 @@ namespace :plugin do
     end
     puts "Copying plugin to #{plugin_path}"
     FileUtils.cp("./package.json", "#{plugin_path}/package.json")
-    FileUtils.cp("./main.js", "#{plugin_path}/main.js")
+    FileUtils.cp_r("./src", "#{plugin_path}/src")
   end
 
   namespace :dependencies do
