@@ -11,7 +11,7 @@ namespace :plugin do
       FileUtils.mkdir(plugin_path)
     end
     FileUtils.cp("./package.json", "#{plugin_path}/package.json")
-    FileUtils.cp_r("./src", "#{plugin_path}/src")
+    FileUtils.cp("./main.js", "#{plugin_path}/main.js")
   end
 
   namespace :dependencies do

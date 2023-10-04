@@ -1,7 +1,6 @@
 {
   "name": "insomnia-plugin-base64",
   "version": "1.0.0",
-  "main": "app.js",
   "scripts": {
     "test": "jest"
   },
