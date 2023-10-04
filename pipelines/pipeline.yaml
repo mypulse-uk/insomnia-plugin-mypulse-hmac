@@ -14,11 +14,11 @@ resources:
       branch: master
       private_key: ((git_ssh_key))
 
-  - name: application-builder-image
+  - name: infra-builder-image
     type: docker-image
     source:
-      repository: ((application_builder_image_repository_url))
-      tag: ((application_builder_image_tag))
+      repository: ((infra_builder_image_repository_url))
+      tag: ((infra_builder_image_tag))
 
   - name: notify-success
     type: slack-notification
@@ -37,10 +37,10 @@ jobs:
       - in_parallel:
           - get: source
             trigger: true
-          - get: application-builder-image
+          - get: infra-builder-image
       - task: test
         file: source/pipelines/test/task.yaml
-        image: application-builder-image
+        image: infra-builder-image
         params:
           VAULT_APPROLE_ROLE_ID: ((ci_secrets_role_id))
           VAULT_APPROLE_SECRET_ID: ((ci_secrets_secret_id))
