@@ -59,6 +59,20 @@ describe('Canonical Request', () => {
     expect(canonicalRequest).toStrictEqual(`GET\n/foo\na=a&b=b\n${hashedEmptyBody}`)
   })
 
+  it('creates request for get request with numerical value query param', () => {
+    const request = createRequest({
+      method: 'GET',
+      url: 'https://example.com/foo',
+      parameters: [
+        {name: 'a', value: 3},
+      ]
+    })
+
+    const canonicalRequest = createCanonicalRequest(request)
+
+    expect(canonicalRequest).toStrictEqual(`GET\n/foo\na=3\n${hashedEmptyBody}`)
+  })
+
   it('creates request for get request with query params containing characters needing encoding', () => {
     const request = createRequest({
       method: 'GET',

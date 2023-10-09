@@ -38,11 +38,24 @@ const createCanonicalParameters = (queryParameters) => {
 }
 
 const toParameterArray = (string) => {
-  try {
+  if (isJson(string)) {
     return JSON.parse(string)
-  } catch (_) {
-    return [string]
   }
+  return [string]
+}
+
+function isJson(input) {
+  const type = typeof input;
+  let inputAsString = type !== "string" ? JSON.stringify(input) : input
+
+  let value
+  try {
+    value = JSON.parse(inputAsString)
+  } catch (_) {
+    return false
+  }
+
+  return typeof value === "object" && value !== null
 }
 
 module.exports = {
