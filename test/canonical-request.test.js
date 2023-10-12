@@ -44,10 +44,10 @@ describe('Canonical Request', () => {
     expect(canonicalRequest).toStrictEqual(`POST\n/\n\n${encodedBody}`)
   })
 
-  it('creates request for get request with query params', () => {
+  it('creates request with sorted query params for request with multiple query params', () => {
     const request = createRequest({
       method: 'GET',
-      url: 'https://example.com/foo',
+      url: 'https://example.com/',
       parameters: [
         {name: 'b', value: "b"},
         {name: 'a', value: "a"},
@@ -56,13 +56,13 @@ describe('Canonical Request', () => {
 
     const canonicalRequest = createCanonicalRequest(request)
 
-    expect(canonicalRequest).toStrictEqual(`GET\n/foo\na=a&b=b\n${hashedEmptyBody}`)
+    expect(canonicalRequest).toStrictEqual(`GET\n/\na=a&b=b\n${hashedEmptyBody}`)
   })
 
-  it('creates request for get request with numerical value query param', () => {
+  it('creates request for request with numerical value query param', () => {
     const request = createRequest({
       method: 'GET',
-      url: 'https://example.com/foo',
+      url: 'https://example.com/',
       parameters: [
         {name: 'a', value: 3},
       ]
@@ -70,21 +70,63 @@ describe('Canonical Request', () => {
 
     const canonicalRequest = createCanonicalRequest(request)
 
-    expect(canonicalRequest).toStrictEqual(`GET\n/foo\na=3\n${hashedEmptyBody}`)
+    expect(canonicalRequest).toStrictEqual(`GET\n/\na=3\n${hashedEmptyBody}`)
   })
 
-  it('creates request for get request with query params containing characters needing encoding', () => {
+  it('creates request with encoded query params for request with query params containing characters needing encoding', () => {
     const request = createRequest({
       method: 'GET',
-      url: 'https://example.com/foo',
+      url: 'https://example.com/',
       parameters: [
-        {name: 'a', value: "a"},
-        {name: 'multi', value: `["c", "b"]`},
+        {name: 'key+', value: ':/ []'},
       ]
     })
 
     const canonicalRequest = createCanonicalRequest(request)
 
-    expect(canonicalRequest).toStrictEqual(`GET\n/foo\na=a&multi=b&multi=c\n${hashedEmptyBody}`)
+    expect(canonicalRequest).toStrictEqual(`GET\n/\nkey%2B=%3A%2F%20%5B%5D\n${hashedEmptyBody}`)
+  })
+
+  it('creates request for get request with query param missing value', () => {
+    const request = createRequest({
+      method: 'GET',
+      url: 'https://example.com/',
+      parameters: [
+        {name: 'a', value: ''},
+      ]
+    })
+
+    const canonicalRequest = createCanonicalRequest(request)
+
+    expect(canonicalRequest).toStrictEqual(`GET\n/\na=\n${hashedEmptyBody}`)
+  })
+
+  it('creates request with encoded list for request with query param value being a list', () => {
+    const request = createRequest({
+      method: 'GET',
+      url: 'https://example.com/',
+      parameters: [
+        {name: 'a', value: `["c", "b"]`},
+      ]
+    })
+
+    const canonicalRequest = createCanonicalRequest(request)
+
+    expect(canonicalRequest).toStrictEqual(`GET\n/\na=%5B%22c%22%2C%20%22b%22%5D\n${hashedEmptyBody}`)
+  })
+
+  it('creates request with sorted query param for request with query param', () => {
+    const request = createRequest({
+      method: 'GET',
+      url: 'https://example.com/',
+      parameters: [
+        {name: 'a', value: 'c'},
+        {name: 'a', value: 'b'},
+      ]
+    })
+
+    const canonicalRequest = createCanonicalRequest(request)
+
+    expect(canonicalRequest).toStrictEqual(`GET\n/\na=b&a=c\n${hashedEmptyBody}`)
   })
 })

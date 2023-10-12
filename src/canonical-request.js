@@ -19,12 +19,7 @@ const createCanonicalRequest = (request) => {
 }
 
 const createCanonicalParameters = (queryParameters) => {
-  const flattenedQueryParameters = queryParameters.flatMap(({name, value}) => {
-    const array = toParameterArray(value)
-    return array.map(x => ({name, value: x}))
-  })
-
-  flattenedQueryParameters.sort(function (a, b) {
+  queryParameters.sort(function (a, b) {
     const nameComparison = a.name.localeCompare(b.name)
     if (nameComparison === 0) {
       return a.value.localeCompare(b.value)
@@ -33,29 +28,10 @@ const createCanonicalParameters = (queryParameters) => {
     }
   })
 
-  const queryParameterValues = flattenedQueryParameters.map(({name, value}) => `${name}=${encodeURIComponent(value)}`)
+  const queryParameterValues = queryParameters.map(({name, value}) =>
+    `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
+  )
   return queryParameterValues.join('&')
-}
-
-const toParameterArray = (string) => {
-  if (isJson(string)) {
-    return JSON.parse(string)
-  }
-  return [string]
-}
-
-function isJson(input) {
-  const type = typeof input;
-  let inputAsString = type !== "string" ? JSON.stringify(input) : input
-
-  let value
-  try {
-    value = JSON.parse(inputAsString)
-  } catch (_) {
-    return false
-  }
-
-  return typeof value === "object" && value !== null
 }
 
 module.exports = {
