@@ -1,5 +1,5 @@
 const createMockClock = () => ({
-  getEpochSeconds: jest.fn().mockName('getEpochSeconds')
+  getEpochMilliseconds: jest.fn().mockName('getEpochMilliseconds')
 })
 
 module.exports = {
