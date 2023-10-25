@@ -37,7 +37,7 @@ describe('MyPulse HMAC Request Hook', () => {
   it('adds hmac headers when access-key header set and secret key provided ', () => {
     const {hmacRequestHook, clock} = initialiseHmacRequestHook()
     const nowEpochSeconds = 946684800
-    clock.getEpochSeconds.mockReturnValue(nowEpochSeconds)
+    clock.getEpochMilliseconds.mockReturnValue(nowEpochSeconds)
     const accessKeyId = "accessKeyId"
     const secretAccessKey = Buffer.from('secretAccessKey', 'utf8').toString('base64')
     const request = createRequest({
@@ -51,6 +51,6 @@ describe('MyPulse HMAC Request Hook', () => {
 
     expect(request.setHeader).toHaveBeenCalledWith('X-Mp-Timestamp', nowEpochSeconds)
     expect(request.setHeader).toHaveBeenCalledWith('Authorization', "8AO+smKGPNjLh+rCA3UhGfqV/FFSrUGQmrdOzJybjn8=")
-    expect(clock.getEpochSeconds).toHaveBeenCalledTimes(1)
+    expect(clock.getEpochMilliseconds).toHaveBeenCalledTimes(1)
   })
 })

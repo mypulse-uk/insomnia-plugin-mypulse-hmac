@@ -6,7 +6,7 @@ const timestampHeader = 'X-Mp-Timestamp'
 const authorizationHeader = 'Authorization'
 
 const defaultClock = {
-  getEpochSeconds: () => Math.round(Date.now() / 1000)
+  getEpochMilliseconds: () => Date.now()
 }
 
 const createHmacRequestHook = (clock = defaultClock) => {
@@ -25,7 +25,7 @@ const createHmacRequestHook = (clock = defaultClock) => {
       throw new Error(`MP - HMAC: No secretKeyId found for ${accessKeyId}`)
     }
 
-    const timestamp = clock.getEpochSeconds()
+    const timestamp = clock.getEpochMilliseconds()
     const signature = sign(timestamp, accessKeyId, secretAccessKey, request)
     request.setHeader(timestampHeader, timestamp)
     request.setHeader(authorizationHeader, signature)
